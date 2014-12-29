@@ -476,6 +476,28 @@ class Plugin(object):
             if filespec not in self.copy_paths:
                 self.copy_paths.append((filespec, sub))
 
+    def add_copy_spec_sysfs(self, directory, skip=False):
+        """This is the first prototype to get in a nicer way entries
+        from the virtual file system sysfs """
+
+        if os.path.islink(directory):
+            directory = os.path.realpath(directory)
+
+        for (dirpath, dirnames, filenames) in os.walk(directory):
+            if (len(dirnames) == 0):
+                for f in filenames:
+                    add_copy_spec(dirpath+"/"+f)
+            else:
+                for d in dirnames:
+                    add_copy_spec(dirpath+"/"+d)
+                    if (skip == True):
+                        if os.path.islink(dirpath+"/"+d):
+                            continue
+                        else:
+                            traversefs(dirpath+"/"+d, skip=True)
+                    else:
+                        traversefs(dirpath+"/"+d, skip=True)
+
     def call_ext_prog(self, prog, timeout=300):
         """Execute a command independantly of the output gathering part of
         sosreport.
