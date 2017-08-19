@@ -54,7 +54,7 @@ class RedHatPolicy(LinuxPolicy):
             self._host_sysroot = sysroot
         else:
             sysroot = self._container_init()
-        self.package_manager = PackageManager(self._rpmq_cmd, chroot=sysroot, self._rpmql_cmd)
+        self.package_manager = PackageManager(query_command=self._rpmq_cmd, chroot=sysroot, grab_files=self._rpmql_cmd)
         self.valid_subclasses = [RedHatPlugin]
 
         pkgs = self.package_manager.all_pkgs()
