@@ -26,12 +26,6 @@ class Unpackaged(Plugin, RedHatPlugin):
 
     def setup(self):
 
-        def all_files_rpm():
-            """
-            It returns a list of files known by the package manager
-            """
-            return self.get_command_output('rpm -qal')['output'].splitlines()
-
         def get_env_path_list():
             """
             It returns a list of directories contained in the $PATH var
@@ -77,7 +71,7 @@ class Unpackaged(Plugin, RedHatPlugin):
             return file_list
 
         all_fsystem = []
-        all_frpm = set(mangle_usrmove(all_files_rpm()))
+        all_frpm = set(mangle_usrmove(self.policy().package_manager.files))
         for d in get_env_path_list():
             all_fsystem += all_files_system(d)
         not_packaged = [x for x in all_fsystem if x not in all_frpm]
