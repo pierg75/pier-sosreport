@@ -32,24 +32,6 @@ class Unpackaged(Plugin, RedHatPlugin):
             """
             return os.environ['PATH'].split(':')
 
-        def check_usrmove():
-            """
-            It checks if '/bin' and '/sbin' are symlink to '/usr/[s]bin'.
-            It returns True if both paths are symlinks.
-            """
-            return os.path.islink('/bin') and os.path.islink('/sbin')
-
-        def mangle_usrmove(files):
-            """
-            files: list
-
-            If we are on a post-usrmove system, all files will be in
-            '/usr/[s]bin'.
-            This will substitute all the /[s]bin references in the 'files' list
-            with '/usr/[s]bin'
-            """
-            return [re.sub(r'(^)(/s?bin)', r'\1/usr\2', f) for f in files]
-
         def all_files_system(path, exclude=None):
             """
             path: string
@@ -71,7 +53,8 @@ class Unpackaged(Plugin, RedHatPlugin):
             return file_list
 
         all_fsystem = []
-        all_frpm = set(mangle_usrmove(self.policy().package_manager.files))
+        all_frpm = set(self.policy().mangle_package_path(
+                       self.policy().package_manager.files))
         for d in get_env_path_list():
             all_fsystem += all_files_system(d)
         not_packaged = [x for x in all_fsystem if x not in all_frpm]
