@@ -59,13 +59,13 @@ class PackageManager(object):
 
     def __init__(self, query_command=None, chroot=None, grab_files=None):
         self.packages = {}
-		self.files = []
+        self.files = []
         if query_command:
             self.query_command = query_command
         if chroot:
             self.chroot = chroot
-		if grab_files:
-			self.grab_files = grab_files
+        if grab_files:
+            self.grab_files = grab_files
 
     def all_pkgs_by_name(self, name):
         """
@@ -129,16 +129,16 @@ class PackageManager(object):
         name = "-".join(fields[:-3])
         return (name, version, release, arch)
 
-	def all_files(self):
-		"""
-		Returns a list of files known by the package manager
-		"""
-		if self.grab_files:
-			cmd = self.grab_files
-			self.files = shell_out(
-				cmd, timeout=0, chroot=self.chroot
-			)['output'].splitlines()
-		return self.files
+    def all_files(self):
+        """
+        Returns a list of files known by the package manager
+        """
+        if self.grab_files:
+            cmd = self.grab_files
+            self.files = shell_out(
+                cmd, timeout=0, chroot=self.chroot
+            ).splitlines()
+        return self.files
 
 
 class Policy(object):
