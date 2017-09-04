@@ -73,7 +73,8 @@ class RedHatPolicy(LinuxPolicy):
 
         # If the files rpm query failed, exit
         if not files:
-            print("Could not obtain the files list known to the package manager", file=sys.stderr)
+            print("Could not obtain the files list known to the package \
+            manager", file=sys.stderr)
             sys.exit(1)
 
         self.usrmove = self.check_usrmove(pkgs)
