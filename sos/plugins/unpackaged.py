@@ -51,12 +51,25 @@ class Unpackaged(Plugin, RedHatPlugin):
 
             return file_list
 
+        def format_output(files):
+            """
+            files: list
+
+            It returns a better formatted string in case we have symlinks
+            """
+            expanded = []
+            for f in files:
+                if os.path.islink(f):
+                    expanded.append("{} -> {}".format(f, os.readlink(f)))
+                else:
+                    expanded.append(f)
+            return expanded
+
         all_fsystem = []
         all_frpm = set(self.policy().mangle_package_path(
                        self.policy().package_manager.files))
         for d in get_env_path_list():
             all_fsystem += all_files_system(d)
         not_packaged = [x for x in all_fsystem if x not in all_frpm]
-        not_packaged_expanded = ["{} -> {}".format(x, os.readlink(x))
-                                 for x in not_packaged if os.path.islink(x)]
+        not_packaged_expanded = format_output(not_packaged)
         self.add_string_as_file('\n'.join(not_packaged_expanded), 'unpackaged')
