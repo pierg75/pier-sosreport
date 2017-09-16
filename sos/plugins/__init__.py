@@ -564,6 +564,28 @@ class Plugin(object):
                                          self.name(), strfile)
                 self.archive.add_link(link_path, _file)
 
+    def add_sysfs_path(self, sysfs_path, exclude):
+        """
+           sysfs_path: list
+           exclude: list
+
+           It copies recursively all the files in a sysfs path.
+           It will follow symlinks but they are treated as normal
+           paths (i.e. it won't go to the realpath).
+           It tries to avoid any infinite loop (very likely in sysfs)
+           and it will exclude all the paths containing the list 'exclude'
+        """
+        files = os.listdir(sysfs_path)
+        files.sort()
+        for f in files:
+            if f not in exclude:
+                full_path = os.path.join(sysfs_path, f)
+                self._add_copy_paths([full_path])
+                if f in sysfs_path:
+                    continue
+                if os.path.isdir(full_path):
+                    walkdir(full_path, exclude)
+
     def get_command_output(self, prog, timeout=300, stderr=True,
                            chroot=True, runat=None, env=None):
         if chroot or self.commons['cmdlineopts'].chroot == 'always':
