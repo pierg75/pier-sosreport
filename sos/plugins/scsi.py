@@ -25,13 +25,13 @@ class Scsi(Plugin, RedHatPlugin, UbuntuPlugin, DebianPlugin):
     def setup(self):
         self.add_copy_spec([
             "/proc/scsi",
-            "/etc/stinit.def",
-            "/sys/bus/scsi",
-            "/sys/class/scsi_host",
-            "/sys/class/scsi_disk",
-            "/sys/class/scsi_device",
-            "/sys/class/scsi_generic"
+            "/etc/stinit.def"
         ])
+        self.add_sysfs_path('/sys/class/scsi_host')
+        self.add_sysfs_path('/sys/class/scsi_disk')
+        self.add_sysfs_path('/sys/class/scsi_device')
+        self.add_sysfs_path('/sys/class/scsi_generic')
+        self.add_sysfs_path('/sys/bus/scsi')
 
         self.add_cmd_output([
             "lsscsi",
