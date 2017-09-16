@@ -564,7 +564,7 @@ class Plugin(object):
                                          self.name(), strfile)
                 self.archive.add_link(link_path, _file)
 
-    def add_sysfs_path(self, sysfs_path, exclude):
+    def add_sysfs_path(self, sysfs_path, exclude=None):
         """
            sysfs_path: list
            exclude: list
@@ -575,16 +575,20 @@ class Plugin(object):
            It tries to avoid any infinite loop (very likely in sysfs)
            and it will exclude all the paths containing the list 'exclude'
         """
+        list_sys_files = []
         files = os.listdir(sysfs_path)
         files.sort()
         for f in files:
-            if f not in exclude:
-                full_path = os.path.join(sysfs_path, f)
-                self._add_copy_paths([full_path])
-                if f in sysfs_path:
-                    continue
-                if os.path.isdir(full_path):
-                    walkdir(full_path, exclude)
+            if exclude and f in exclude:
+                continue
+            full_path = os.path.join(sysfs_path, f)
+            if f in sysfs_path:
+                continue
+            if os.path.isdir(full_path):
+                self.add_sysfs_path(full_path, exclude)
+            else:
+                list_sys_files.append(full_path)
+        self._add_copy_paths(list_sys_files)
 
     def get_command_output(self, prog, timeout=300, stderr=True,
                            chroot=True, runat=None, env=None):
