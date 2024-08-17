@@ -1833,6 +1833,9 @@ class Plugin():
                 if _file in self.copy_paths:
                     self._log_debug(f"skipping redundant file '{_file}'")
                     continue
+                if _file in self._tail_files_list:
+                    self._log_debug(f"skipping redundant tailed file '{_file}'")
+                    continue
                 if self._is_forbidden_path(_file):
                     self._log_debug(f"skipping forbidden path '{_file}'")
                     continue
